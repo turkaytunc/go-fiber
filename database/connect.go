@@ -1,6 +1,7 @@
 package database
 
 import (
+	"github.com/turkaytunc/go-web-fiber/models"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -14,6 +15,8 @@ func Connect() *gorm.DB {
 	if err != nil {
 		panic("cannot connect db")
 	}
+
+	db.AutoMigrate(&models.User{})
 
 	return db
 }
