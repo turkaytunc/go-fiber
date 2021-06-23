@@ -47,7 +47,7 @@ func Login(c *fiber.Ctx) error {
 		return c.Status(400).JSON(fiber.Map{"message": "password is incorrect"})
 	}
 
-	cl := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{Issuer: strconv.Itoa(int(user.Id)), ExpiresAt: int64(time.Hour)})
+	cl := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{Issuer: strconv.Itoa(int(user.Id)), ExpiresAt: time.Now().Add(time.Hour).Unix()})
 
 	token, tokenErr := cl.SignedString([]byte("secret"))
 
@@ -58,4 +58,29 @@ func Login(c *fiber.Ctx) error {
 	c.Cookie(&fiber.Cookie{Name: "jwt", Value: token, Expires: time.Now().Add(time.Hour)})
 
 	return c.JSON(&user)
+}
+
+type Claims struct {
+	jwt.StandardClaims
+}
+
+func User(c *fiber.Ctx) error {
+	cookie := c.Cookies("jwt")
+
+	token, err := jwt.ParseWithClaims(cookie, &Claims{}, func(t *jwt.Token) (interface{}, error) {
+		return []byte("secret"), nil
+	})
+
+	if err != nil || !token.Valid {
+		return err
+	}
+
+	claims := token.Claims.(*Claims)
+
+	var user models.User
+
+	database.DB.Where("id = ?", claims.Issuer).First(&user)
+
+	return c.JSON(user)
+
 }
