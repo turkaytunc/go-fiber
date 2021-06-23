@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"errors"
 	"strconv"
 	"time"
 
@@ -66,6 +67,11 @@ type Claims struct {
 
 func User(c *fiber.Ctx) error {
 	cookie := c.Cookies("jwt")
+
+	if cookie == "" {
+
+		return errors.New("please provide jwt")
+	}
 
 	token, err := jwt.ParseWithClaims(cookie, &Claims{}, func(t *jwt.Token) (interface{}, error) {
 		return []byte("secret"), nil
