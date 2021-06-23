@@ -6,6 +6,10 @@ import (
 	"gorm.io/gorm"
 )
 
+var (
+	DB *gorm.DB
+)
+
 func Connect() *gorm.DB {
 	db, err := gorm.Open(postgres.New(postgres.Config{
 		DSN:                  "user=postgres password=pass123 dbname=test port=5432 sslmode=disable",
@@ -18,5 +22,6 @@ func Connect() *gorm.DB {
 
 	db.AutoMigrate(&models.User{})
 
+	DB = db
 	return db
 }

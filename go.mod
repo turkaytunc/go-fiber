@@ -3,6 +3,7 @@ module github.com/turkaytunc/go-web-fiber
 go 1.16
 
 require (
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gofiber/fiber/v2 v2.12.0
 	golang.org/x/crypto v0.0.0-20210616213533-5ff15b29337e
 	gopkg.in/yaml.v2 v2.3.0 // indirect
